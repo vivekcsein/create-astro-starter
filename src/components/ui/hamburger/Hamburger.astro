@@ -1,0 +1,23 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@/packages/utils/cn";
+
+type Props = HTMLAttributes<"button"> & { controls?: string };
+const { controls, class: className, ...rest } = Astro.props;
+---
+<button
+  type="button"
+  class={cn("hamburger", className)}
+  data-open="false"
+  aria-label="Open navigation menu"
+  aria-expanded="false"
+  aria-controls={controls}
+  data-hamburger
+  {...rest}
+>
+  <span class="hamburger-bars" aria-hidden="true">
+    <span class="hamburger-bar"></span>
+    <span class="hamburger-bar"></span>
+    <span class="hamburger-bar"></span>
+  </span>
+</button>

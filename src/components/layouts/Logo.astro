@@ -1,0 +1,16 @@
+---
+import { appConfig } from "@/packages/configs/app.config";
+
+type Props = { size?: number };
+const { size = 128 } = Astro.props;
+---
+<a href={appConfig.routes.home} id="navigation-logo" aria-label={`${appConfig.app.name} home`}>
+  <img
+    src={appConfig.site.logo}
+    alt={`${appConfig.app.name} logo`}
+    width={size}
+    height={size}
+    loading="eager"
+    decoding="async"
+  />
+</a>

@@ -1,0 +1,240 @@
+---
+import { appConfig } from "@/packages/configs/app.config";
+import { MOBILE_MENU_ID, mainNav } from "@/packages/configs/navigation.config";
+import { Hamburger } from "../ui";
+import Logo from "./Logo.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+
+type Props = { sticky?: boolean };
+const { sticky = true } = Astro.props;
+const pathname = Astro.url.pathname;
+---
+<header class={`header ${sticky ? "header-sticky" : ""}`} data-header>
+  <div class="header-main">
+    <Logo size={48} />
+
+    <nav class="desktop-nav" aria-label="Main">
+      <ul class="nav-links-list">
+        {
+          mainNav.map((tab) =>
+            tab.dropdown?.length ? (
+              <li class="nav-item" data-dropdown-item>
+                <button type="button" class="nav-btn" aria-haspopup="true" aria-expanded="false">
+                  <span class="nav-label">{tab.title}</span>
+                  <span class="chevron-arrow" aria-hidden="true" />
+                </button>
+                <div class="mega-dropdown">
+                  <div class="mega-dropdown-inner">
+                    {tab.dropdown.map((col) => (
+                      <div class="dropdown-column">
+                        <h4 class="column-heading">{col.category}</h4>
+                        <ul class="column-links">
+                          {col.items.map((item) => (
+                            <li>
+                              <a
+                                href={item.href}
+                                class="dropdown-link-item"
+                                aria-current={pathname === item.href ? "page" : undefined}
+                              >
+                                {item.label}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </li>
+            ) : (
+              <li class="nav-item">
+                <a
+                  href={tab.href ?? "#"}
+                  class="nav-btn"
+                  class:list={{ active: tab.href === pathname }}
+                  aria-current={tab.href === pathname ? "page" : undefined}
+                >
+                  <span class="nav-label">{tab.title}</span>
+                </a>
+              </li>
+            ),
+          )
+        }
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <ThemeToggle />
+      <Hamburger controls={MOBILE_MENU_ID} data-hamburger-open />
+    </div>
+  </div>
+
+  <div class="drawer-root mobile-menu-root" data-drawer>
+    <button type="button" class="drawer-backdrop" aria-label="Close navigation menu" tabindex="-1" data-drawer-close></button>
+
+    <div
+      id={MOBILE_MENU_ID}
+      class="drawer-panel drawer-panel-right"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Navigation menu"
+      tabindex="-1"
+    >
+      <div class="drawer-content">
+        <nav class="mobile-nav" aria-label="Mobile">
+          {
+            mainNav.map((tab) =>
+              tab.dropdown?.length ? (
+                <div class="accordion-item" data-accordion-item>
+                  <button type="button" class="accordion-trigger" aria-expanded="false" data-accordion-trigger>
+                    <span class="accordion-title">{tab.title}</span>
+                    <span class="accordion-chevron" aria-hidden="true" />
+                  </button>
+                  <section class="accordion-panel">
+                    <div class="accordion-panel-inner">
+                      <div class="accordion-panel-content">
+                        {tab.dropdown.map((col) => (
+                          <div class="mobile-subcat">
+                            <div class="mobile-subcat-title">{col.category}</div>
+                            <ul class="mobile-subcat-links">
+                              {col.items.map((item) => (
+                                <li>
+                                  <a
+                                    href={item.href}
+                                    class="mobile-sublink"
+                                    aria-current={pathname === item.href ? "page" : undefined}
+                                    data-drawer-close
+                                  >
+                                    {item.label}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              ) : (
+                <div class="accordion-item">
+                  <a
+                    href={tab.href ?? "#"}
+                    class="mobile-nav-link"
+                    class:list={{ active: tab.href === pathname }}
+                    aria-current={tab.href === pathname ? "page" : undefined}
+                    data-drawer-close
+                  >
+                    <span class="accordion-title">{tab.title}</span>
+                  </a>
+                </div>
+              ),
+            )
+          }
+        </nav>
+      </div>
+
+      <div class="drawer-footer">
+        <a href={appConfig.routes.auth.signIn} class="mobile-sign-btn" data-drawer-close>
+          Sign In
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .mobile-sign-btn {
+    display: inline-flex;
+    width: 100%;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-weight: 500;
+    text-decoration: none;
+  }
+</style>
+
+<script>
+  const HOVER_CLOSE_DELAY = 120;
+
+  const initDesktopDropdowns = () => {
+    const items = document.querySelectorAll<HTMLElement>("[data-dropdown-item]");
+    let closeTimer: number | undefined;
+
+    const setOpen = (target: HTMLElement | null) => {
+      for (const item of items) {
+        const open = item === target;
+        item.querySelector(".mega-dropdown")?.classList.toggle("is-visible", open);
+        const trigger = item.querySelector<HTMLElement>(".nav-btn");
+        trigger?.classList.toggle("active", open);
+        trigger?.setAttribute("aria-expanded", String(open));
+      }
+    };
+
+    for (const item of items) {
+      item.addEventListener("pointerenter", () => {
+        window.clearTimeout(closeTimer);
+        setOpen(item);
+      });
+      item.addEventListener("pointerleave", () => {
+        closeTimer = window.setTimeout(() => setOpen(null), HOVER_CLOSE_DELAY);
+      });
+      item.querySelector(".nav-btn")?.addEventListener("click", () => {
+        const isOpen = item.querySelector(".mega-dropdown")?.classList.contains("is-visible");
+        setOpen(isOpen ? null : item);
+      });
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setOpen(null);
+    });
+  };
+
+  const initDrawer = () => {
+    const header = document.querySelector<HTMLElement>("[data-header]");
+    const drawer = header?.querySelector<HTMLElement>("[data-drawer]");
+    const backdrop = drawer?.querySelector<HTMLElement>(".drawer-backdrop");
+    const toggle = header?.querySelector<HTMLElement>("[data-hamburger]");
+    if (!header || !drawer || !backdrop || !toggle) return;
+
+    const setOpen = (open: boolean) => {
+      drawer.classList.toggle("is-open", open);
+      header.classList.toggle("menu-open", open);
+      toggle.setAttribute("data-open", String(open));
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
+      backdrop.tabIndex = open ? 0 : -1;
+      document.body.style.overflow = open ? "hidden" : "";
+      if (open) drawer.querySelector<HTMLElement>(".drawer-panel")?.focus();
+      else toggle.focus({ preventScroll: true });
+    };
+
+    toggle.addEventListener("click", () => setOpen(!drawer.classList.contains("is-open")));
+    for (const el of drawer.querySelectorAll("[data-drawer-close]")) {
+      el.addEventListener("click", () => setOpen(false));
+    }
+    backdrop.addEventListener("click", () => setOpen(false));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && drawer.classList.contains("is-open")) setOpen(false);
+    });
+
+    for (const trigger of drawer.querySelectorAll<HTMLElement>("[data-accordion-trigger]")) {
+      trigger.addEventListener("click", () => {
+        const item = trigger.closest<HTMLElement>("[data-accordion-item]");
+        const willOpen = item?.getAttribute("data-open") !== "true";
+        for (const other of drawer.querySelectorAll<HTMLElement>("[data-accordion-item]")) {
+          const open = other === item && willOpen;
+          other.setAttribute("data-open", String(open));
+          other.querySelector("[data-accordion-trigger]")?.setAttribute("aria-expanded", String(open));
+        }
+      });
+    }
+  };
+
+  initDesktopDropdowns();
+  initDrawer();
+</script>

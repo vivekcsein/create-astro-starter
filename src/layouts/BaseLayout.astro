@@ -1,0 +1,59 @@
+---
+import "@fontsource-variable/oxanium";
+import "@fontsource/inika";
+import "@fontsource/inika/700.css";
+import "@fontsource/cousine";
+import "@/styles/globals.css";
+import Footer from "@/components/layouts/Footer.astro";
+import Header from "@/components/layouts/Header.astro";
+import { appConfig } from "@/packages/configs/app.config";
+import {
+  buildMetadata,
+  type PageMetadata,
+} from "@/packages/metadata/app.metadata";
+import { themeInitScript } from "@/packages/utils/theme";
+
+type Props = PageMetadata & {
+  /** Hide header/footer — used by the auth pages' centered layout if desired. */
+  bare?: boolean;
+};
+
+const { bare = false, ...page } = Astro.props;
+const meta = buildMetadata(page, Astro.url.pathname);
+---
+<!doctype html>
+<html lang={appConfig.app.locale} data-theme={appConfig.site.style} class="h-full antialiased">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href={appConfig.routes.system.favicon} sizes="any" />
+    <link rel="canonical" href={meta.canonical} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="keywords" content={appConfig.keywords.join(", ")} />
+
+    <title>{meta.title}</title>
+    <meta name="description" content={meta.description} />
+    {meta.noindex && <meta name="robots" content="noindex" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={appConfig.app.name} />
+    <meta property="og:title" content={meta.title} />
+    <meta property="og:description" content={meta.description} />
+    <meta property="og:url" content={meta.canonical} />
+    {meta.image && <meta property="og:image" content={meta.image} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={meta.title} />
+    <meta name="twitter:description" content={meta.description} />
+    {meta.image && <meta name="twitter:image" content={meta.image} />}
+
+    <!-- Runs before first paint so the right .dark class is applied — no theme flash. -->
+    <script is:inline set:html={themeInitScript} />
+  </head>
+  <body>
+    {!bare && <Header />}
+    <main>
+      <slot />
+    </main>
+    {!bare && <Footer />}
+  </body>
+</html>

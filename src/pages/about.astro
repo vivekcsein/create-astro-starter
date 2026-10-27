@@ -1,0 +1,13 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { appConfig } from "@/packages/configs/app.config";
+---
+<BaseLayout title="About" description={`About ${appConfig.app.name}`}>
+  <section class="mx-auto max-w-3xl px-6 py-20">
+    <h1>About us</h1>
+    <p>
+      We're a small team building AI-powered tech products, websites, and landing pages for
+      clients around the world — fully online. Replace this copy with your own story.
+    </p>
+  </section>
+</BaseLayout>

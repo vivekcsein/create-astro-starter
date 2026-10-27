@@ -1,0 +1,12 @@
+---
+import { Link } from "@/components/ui";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { appConfig } from "@/packages/configs/app.config";
+---
+<BaseLayout title="Page not found" noindex>
+  <section class="flex min-h-[60svh] flex-col items-center justify-center gap-4 px-6 text-center">
+    <h1 class="text-6xl font-bold">404</h1>
+    <p>We couldn't find that page.</p>
+    <Link href={appConfig.routes.home} variant="primary-button">Back home</Link>
+  </section>
+</BaseLayout>

@@ -1,0 +1,43 @@
+---
+import { Card } from "@/components/ui";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { appConfig } from "@/packages/configs/app.config";
+
+const services = [
+  {
+    href: appConfig.routes.services.webDevelopment,
+    title: "Web Development",
+    body: "Fast, typed, accessible front-ends built on modern tooling.",
+  },
+  {
+    href: appConfig.routes.services.backend,
+    title: "Backend Development",
+    body: "APIs and services built to scale with your product.",
+  },
+  {
+    href: appConfig.routes.services.performanceSeo,
+    title: "Performance & SEO",
+    body: "Faster pages, better rankings, measurable results.",
+  },
+  {
+    href: appConfig.routes.services.authenticationSecurity,
+    title: "Authentication & Security",
+    body: "Privacy-first, token-based auth done right.",
+  },
+];
+---
+<BaseLayout title="Services" description="What we build.">
+  <section class="mx-auto max-w-5xl px-6 py-20">
+    <h1>Services</h1>
+    <div class="mt-8 grid gap-4 md:grid-cols-2">
+      {services.map((s) => (
+        <a href={s.href} class="block">
+          <Card variant="interactive">
+            <h2 class="text-lg font-semibold">{s.title}</h2>
+            <p class="mt-2 text-sm text-muted-foreground">{s.body}</p>
+          </Card>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

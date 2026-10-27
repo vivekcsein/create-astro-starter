@@ -1,0 +1,16 @@
+---
+import Form from "@/components/features/forms/Form.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { appConfig } from "@/packages/configs/app.config";
+import { signUpForm } from "@/packages/forms/auth.forms";
+---
+<BaseLayout title="Sign up">
+  <section class="px-6 py-20">
+    <Form config={signUpForm}>
+      <p class="text-sm">
+        Already have an account?
+        <a class="text-primary hover:opacity-90" href={appConfig.routes.auth.signIn}>Sign in</a>
+      </p>
+    </Form>
+  </section>
+</BaseLayout>

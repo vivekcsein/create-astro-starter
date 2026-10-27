@@ -1,0 +1,87 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@/packages/utils/cn";
+import type { LinkUnderline, LinkVariant } from "@/types/app";
+
+type Props = HTMLAttributes<"a"> & {
+  href: string;
+  variant?: LinkVariant;
+  underline?: LinkUnderline;
+};
+
+const {
+  variant = "primary",
+  underline = "left",
+  class: className,
+  ...rest
+} = Astro.props;
+
+const underlineOrigin: Record<LinkUnderline, string> = {
+  center: "origin-center",
+  left: "origin-left",
+  right: "origin-right",
+};
+
+const buttonBase =
+  "group relative isolate inline-flex h-11 items-center justify-center overflow-hidden whitespace-nowrap rounded-lg px-5 text-[0.9375rem] font-medium leading-none select-none transition-[transform,box-shadow,border-color,filter,background-color] duration-300 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+---
+{
+  variant === "primary" ? (
+    <a
+      class={cn(
+        "group relative inline-block pb-0.5 font-medium text-[0.95rem] leading-normal text-primary no-underline transition-[color,opacity] duration-250 ease-out hover:text-primary hover:opacity-90 active:opacity-70 focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        className,
+      )}
+      {...rest}
+    >
+      <slot />
+      <span
+        aria-hidden="true"
+        class={cn(
+          "pointer-events-none absolute inset-x-0 bottom-0 h-0.5 scale-x-0 rounded-full bg-primary transition-transform duration-300 ease-out group-hover:scale-x-100",
+          underlineOrigin[underline],
+        )}
+      />
+    </a>
+  ) : variant === "secondary" ? (
+    <a
+      class={cn(
+        "group relative inline-flex min-h-9 touch-manipulation items-center rounded-md px-2 py-1 text-[0.95rem] font-medium leading-normal text-foreground no-underline transition-[background-color,color,opacity] duration-300 ease-out hover:bg-primary/10 hover:text-primary active:bg-primary/15 active:text-primary active:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        className,
+      )}
+      {...rest}
+    >
+      <span class="relative z-10"><slot /></span>
+    </a>
+  ) : variant === "primary-button" ? (
+    <a
+      class={cn(
+        buttonBase,
+        "bg-linear-to-br from-primary via-primary to-primary/75 text-primary-foreground border border-primary/20 hover:border-transparent hover:brightness-[1.03] hover:shadow-[0_8px_24px_-12px_var(--primary)] active:shadow-[0_4px_12px_-8px_var(--primary)]",
+        className,
+      )}
+      {...rest}
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-y-0 left-[-75%] z-0 w-1/2 skew-x-[-20deg] bg-linear-to-r from-transparent via-white/35 to-transparent opacity-0 transition-[left,opacity] duration-900 ease-out group-hover:left-[125%] group-hover:opacity-100"
+      />
+      <span class="relative z-10 inline-flex items-center gap-2"><slot /></span>
+    </a>
+  ) : (
+    <a
+      class={cn(
+        buttonBase,
+        "rounded-(--radius) bg-background/40 text-foreground border border-border hover:border-primary hover:bg-background/50 hover:shadow-[0_8px_24px_-12px_var(--primary)] active:shadow-[0_4px_12px_-8px_var(--primary)]",
+        className,
+      )}
+      {...rest}
+    >
+      <span
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-y-0 left-[-75%] z-0 w-1/2 skew-x-[-20deg] bg-linear-to-r from-transparent via-white/20 to-transparent opacity-0 transition-[left,opacity] duration-900 ease-out group-hover:left-[125%] group-hover:opacity-100"
+      />
+      <span class="relative z-10 inline-flex items-center gap-2"><slot /></span>
+    </a>
+  )
+}

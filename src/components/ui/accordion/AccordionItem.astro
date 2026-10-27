@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "@/packages/utils/cn";
+
+type Props = HTMLAttributes<"div"> & { title: string };
+const { title, class: className, ...rest } = Astro.props;
+const panelId = `panel-${Math.random().toString(36).slice(2, 9)}`;
+---
+<div class={cn("accordion-item", className)} data-open="false" data-accordion-item {...rest}>
+  <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls={panelId} data-accordion-trigger>
+    <span class="accordion-title">{title}</span>
+    <span class="accordion-chevron" aria-hidden="true"></span>
+  </button>
+
+  <section id={panelId} class="accordion-panel">
+    <div class="accordion-panel-inner">
+      <div class="accordion-panel-content">
+        <slot />
+      </div>
+    </div>
+  </section>
+</div>

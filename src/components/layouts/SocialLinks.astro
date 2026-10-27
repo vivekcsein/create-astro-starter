@@ -1,0 +1,45 @@
+---
+import { appConfig } from "@/packages/configs/app.config";
+import GithubIcon from "../ui/icons/GithubIcon.astro";
+import LinkedinIcon from "../ui/icons/LinkedinIcon.astro";
+import XIcon from "../ui/icons/XIcon.astro";
+
+const links = [
+  {
+    label: "GitHub",
+    href: appConfig.social.github.handle,
+    Icon: GithubIcon,
+    color: "#24292e",
+  },
+  {
+    label: "X",
+    href: appConfig.social.twitter.handle,
+    Icon: XIcon,
+    color: "#000000",
+  },
+  {
+    label: "LinkedIn",
+    href: appConfig.social.linkedin.handle,
+    Icon: LinkedinIcon,
+    color: "#0A66C2",
+  },
+];
+---
+<ul class="site-footer-social">
+  {
+    links.map(({ label, href, Icon, color }) => (
+      <li class="site-footer-social-item" style={`--social-color: ${color}`}>
+        <span class="site-footer-tooltip">{label}</span>
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={label}
+          class="link link-neutral site-footer-social-link"
+        >
+          <Icon size={24} />
+        </a>
+      </li>
+    ))
+  }
+</ul>

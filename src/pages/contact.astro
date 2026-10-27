@@ -1,0 +1,8 @@
+---
+import Form from "@/components/features/forms/Form.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { contactForm } from "@/packages/forms/contact.forms";
+---
+<BaseLayout title="Contact">
+  <section class="px-6 py-20"><Form config={contactForm} /></section>
+</BaseLayout>

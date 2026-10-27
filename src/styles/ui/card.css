@@ -1,0 +1,55 @@
+/* -----------------------------------------------------------------------------
+   Card surface — consumed by components/ui/card/Card.tsx (variants:
+   "static" / "interactive", plus an optional "flush" modifier). Used
+   throughout the app (auth forms, contact form, the Surfaces panel in
+   /dev) as the one card-shaped surface everything renders through.
+   Superseding this with shadcn's Card (Stage 9) is still on the table —
+   until then, this is the real, in-use implementation, not a draft.
+   ----------------------------------------------------------------------------- */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 6%, transparent);
+}
+
+/* Optional modifier for cards that act as clickable surfaces (e.g. wrapped
+   in a <Link />). Static cards should not get this — apply it explicitly. */
+.card.card-interactive {
+  cursor: pointer;
+}
+
+.card.card-interactive:hover {
+  border-color: color-mix(in oklch, var(--ring) 40%, var(--border));
+  box-shadow: 0 8px 20px color-mix(in oklch, var(--foreground) 10%, transparent);
+  transform: translateY(-2px);
+}
+
+.card.card-flush {
+  padding: 0;
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--card-foreground);
+}
+
+.card-description {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}

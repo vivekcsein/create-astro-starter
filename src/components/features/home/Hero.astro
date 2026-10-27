@@ -1,0 +1,37 @@
+---
+import { appConfig } from "@/packages/configs/app.config";
+import { Link } from "../../ui";
+---
+<section class="min-h-[calc(100svh-4rem)]">
+  <div class="relative flex min-h-[calc(100svh-4rem)] flex-col items-center justify-center px-6 py-24 text-center">
+    <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div class="absolute left-1/2 top-1/4 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-linear-to-br from-primary/5 to-secondary/5 blur-3xl"></div>
+    </div>
+
+    <div class="relative z-10 max-w-2xl space-y-8">
+      <div class="inline-flex items-center gap-2 rounded-full border border-border bg-card/50 px-4 py-2 backdrop-blur">
+        <span class="h-2 w-2 rounded-full bg-primary"></span>
+        <span class="text-sm font-medium text-muted-foreground">Enterprise-grade foundation</span>
+      </div>
+
+      <div class="space-y-4">
+        <h1 class="text-balance text-5xl font-bold leading-tight text-foreground md:text-7xl">
+          Ship faster with{" "}
+          <span class="bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+            {appConfig.author.name}
+          </span>
+        </h1>
+        <p class="text-balance text-xl leading-relaxed text-muted-foreground">
+          Strict TypeScript, Zod validation, Tailwind v4 tokens, and a themeable
+          design system — on Astro. Everything you need to build fast,
+          production-ready sites.
+        </p>
+      </div>
+
+      <div class="flex flex-col justify-center gap-4 pt-4 sm:flex-row">
+        <Link href={appConfig.routes.legal.contact} variant="primary-button">Get in touch</Link>
+        <Link href={appConfig.routes.services.webDevelopment} variant="secondary-button">Our services →</Link>
+      </div>
+    </div>
+  </div>
+</section>

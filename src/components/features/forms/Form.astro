@@ -1,0 +1,166 @@
+---
+import { cn } from "@/packages/utils/cn";
+import type { FormConfig } from "@/types/forms";
+import { Card } from "../../ui";
+
+type Props = { config: FormConfig; class?: string };
+const { config, class: className } = Astro.props;
+---
+<Card class={cn("mx-auto w-full max-w-md", className)}>
+  <div class="mb-2 flex flex-col gap-1">
+    <h2 class="text-xl font-semibold text-card-foreground">{config.title}</h2>
+    {config.description && <p class="text-sm text-muted-foreground">{config.description}</p>}
+  </div>
+
+  <form data-form={config.id} novalidate class="flex flex-col gap-4">
+    {
+      config.fields.map((field) => {
+        const id = `${config.id}-${field.name}`;
+        return field.type === "checkbox" ? (
+          <div class="checkbox-field">
+            <label class="checkbox-wrapper" for={id}>
+              <input id={id} name={field.name} type="checkbox" class="checkbox-input" />
+              <span class="checkbox-box" />
+              <span class="checkbox-label">{field.label}</span>
+            </label>
+            <span class="checkbox-error-text" data-error-for={field.name} role="alert" />
+          </div>
+        ) : (
+          <div class="input-wrapper">
+            <label for={id} class="input-label">
+              {field.label}
+              {field.required && <span class="input-required" aria-hidden="true">*</span>}
+            </label>
+
+            {field.type === "textarea" ? (
+              <textarea id={id} name={field.name} rows={field.rows ?? 4} class="textarea" placeholder={field.placeholder} />
+            ) : field.type === "password" ? (
+              <div class="input-field">
+                <input
+                  id={id}
+                  name={field.name}
+                  type="password"
+                  class="input with-icon-right"
+                  placeholder={field.placeholder}
+                  autocomplete={field.autocomplete}
+                />
+                <button type="button" class="input-icon-btn" aria-label="Show password" aria-pressed="false" data-password-toggle>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z" />
+                    <circle cx="12" cy="12" r="3" />
+                    <path class="eye-slash" d="M3 3l18 18" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <input
+                id={id}
+                name={field.name}
+                type={field.type}
+                class="input"
+                placeholder={field.placeholder}
+                autocomplete={field.autocomplete}
+              />
+            )}
+
+            <span class="input-error-text" data-error-for={field.name} role="alert" hidden />
+          </div>
+        );
+      })
+    }
+
+    <p class="form-status" role="status" data-form-status hidden></p>
+
+    <button type="submit" class="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-5 text-[0.9375rem] font-medium text-primary-foreground transition-opacity hover:opacity-90">{config.submitLabel}</button>
+  </form>
+
+  <slot />
+</Card>
+
+<style>
+  .eye-slash {
+    display: block;
+  }
+  [aria-pressed="true"] .eye-slash {
+    display: none;
+  }
+  .form-status {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+  .form-status[data-state="error"] {
+    color: var(--destructive);
+  }
+  .form-status[data-state="success"] {
+    color: var(--success, var(--primary));
+  }
+</style>
+
+<script>
+  import { formSchemas } from "@/packages/schemas";
+
+  const clearErrors = (form: HTMLFormElement) => {
+    for (const el of form.querySelectorAll<HTMLElement>("[data-error-for]")) {
+      el.textContent = "";
+      el.hidden = true;
+    }
+    for (const input of form.querySelectorAll("[aria-invalid]")) {
+      input.removeAttribute("aria-invalid");
+      input.classList.remove("input-error");
+    }
+  };
+
+  for (const form of document.querySelectorAll<HTMLFormElement>("form[data-form]")) {
+    const status = form.querySelector<HTMLElement>("[data-form-status]");
+
+    const setStatus = (state: "error" | "success", message: string) => {
+      if (!status) return;
+      status.dataset.state = state;
+      status.textContent = message;
+      status.hidden = false;
+    };
+
+    form.addEventListener("click", (event) => {
+      const btn = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-password-toggle]");
+      const input = btn?.parentElement?.querySelector<HTMLInputElement>("input");
+      if (!btn || !input) return;
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      btn.setAttribute("aria-pressed", String(show));
+      btn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearErrors(form);
+      if (status) status.hidden = true;
+
+      const schema = formSchemas[form.dataset.form ?? ""];
+      if (!schema) return;
+
+      const values = Object.fromEntries(new FormData(form));
+      const result = schema.safeParse(values);
+
+      if (!result.success) {
+        for (const issue of result.error.issues) {
+          const name = String(issue.path[0] ?? "");
+          const target = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+          if (target && !target.textContent) {
+            target.textContent = issue.message;
+            target.hidden = false;
+          }
+          const input = form.querySelector<HTMLElement>(`[name="${name}"]`);
+          input?.setAttribute("aria-invalid", "true");
+          input?.classList.add("input-error");
+        }
+        form.querySelector<HTMLElement>("[aria-invalid]")?.focus();
+        return;
+      }
+
+      // TODO(api): replace with the real request, e.g.
+      //   await fetch(appConfig.api.auth.email.signin, { method: "POST", body: JSON.stringify(result.data) })
+      // See packages/configs/app.config.ts → `api`.
+      setStatus("success", "Validated — connect this form to your API to finish.");
+    });
+  }
+</script>

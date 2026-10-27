@@ -1,0 +1,10 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { appConfig } from "@/packages/configs/app.config";
+---
+<BaseLayout title="Privacy Policy" description={`Privacy policy for ${appConfig.app.name}`}>
+  <section class="mx-auto max-w-3xl px-6 py-20">
+    <h1>Privacy Policy</h1>
+    <p>Replace this placeholder with your real privacy policy before launch.</p>
+  </section>
+</BaseLayout>

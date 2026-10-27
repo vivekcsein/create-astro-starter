@@ -1,0 +1,322 @@
+/* ==========================================================================
+   Base Button
+   Shared layout, animation and interactions.
+   Every variant only supplies colors.
+   ========================================================================== */
+
+.btn {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+
+  padding: 0.65rem 1.2rem;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+/* ==========================================================================
+   Shine Animation
+   Disabled automatically for flat variants.
+   ========================================================================== */
+
+.btn::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: -75%;
+
+  width: 50%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+
+  transform: skewX(-20deg);
+}
+
+.btn:hover::before {
+  animation: btn-shine 0.9s ease forwards;
+}
+
+@keyframes btn-shine {
+  to {
+    left: 125%;
+  }
+}
+
+/* ==========================================================================
+   Shared Interaction
+   ========================================================================== */
+
+.btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn:focus-visible {
+  outline: none;
+
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--ring);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+
+  transform: none;
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   Filled Variants
+   ========================================================================== */
+
+/* Primary */
+
+.primary-btn {
+  border-color: color-mix(in oklch, var(--primary) 25%, transparent);
+
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    color-mix(in oklch, var(--primary) 75%, transparent)
+  );
+
+  color: var(--primary-foreground);
+}
+
+.primary-btn:hover {
+  box-shadow:
+    0 10px 25px color-mix(in oklch, var(--primary) 35%, transparent),
+    0 0 0 1px color-mix(in oklch, var(--primary) 25%, transparent);
+}
+
+.primary-btn:active {
+  box-shadow: 0 5px 12px color-mix(in oklch, var(--primary) 25%, transparent);
+}
+
+/* Secondary */
+
+.secondary-btn {
+  border-color: color-mix(in oklch, var(--secondary) 60%, transparent);
+
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.secondary-btn:hover {
+  box-shadow: 0 10px 20px color-mix(in oklch, var(--secondary) 45%, transparent);
+}
+
+/* Danger */
+
+.danger-btn {
+  border-color: color-mix(in oklch, var(--destructive) 25%, transparent);
+
+  background: linear-gradient(
+    135deg,
+    var(--destructive),
+    color-mix(in oklch, var(--destructive) 75%, transparent)
+  );
+
+  color: var(--destructive-foreground);
+}
+
+.danger-btn:hover {
+  box-shadow: 0 10px 25px
+    color-mix(in oklch, var(--destructive) 35%, transparent);
+}
+
+.danger-btn:active {
+  box-shadow: 0 5px 12px
+    color-mix(in oklch, var(--destructive) 25%, transparent);
+}
+
+/* ==========================================================================
+   Success
+   ========================================================================== */
+
+.success-btn {
+  border-color: color-mix(in oklch, var(--success) 25%, transparent);
+
+  background: linear-gradient(
+    135deg,
+    var(--success),
+    color-mix(in oklch, var(--success) 75%, transparent)
+  );
+
+  color: var(--success-foreground);
+}
+
+.success-btn:hover {
+  box-shadow: 0 10px 25px color-mix(in oklch, var(--success) 35%, transparent);
+}
+
+.success-btn:active {
+  box-shadow: 0 5px 12px color-mix(in oklch, var(--success) 25%, transparent);
+}
+
+/* ==========================================================================
+   Ghost
+   ========================================================================== */
+
+.ghost-btn {
+  background: transparent;
+  border-color: transparent;
+
+  color: var(--foreground);
+}
+
+.ghost-btn:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   Outline
+   ========================================================================== */
+
+.outline-btn {
+  background: transparent;
+
+  border-color: var(--input);
+  color: var(--foreground);
+}
+
+.outline-btn:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+
+  border-color: var(--ring);
+
+  box-shadow: none;
+}
+
+/* Flat variants don't need the shine effect */
+
+.ghost-btn::before,
+.outline-btn::before {
+  display: none;
+}
+
+/* ==========================================================================
+   Link Button
+   Primary text-link version of Button
+   ========================================================================== */
+
+.link-btn {
+  position: relative;
+
+  padding: 0;
+  border: none;
+  border-radius: 0;
+
+  background: transparent;
+  box-shadow: none;
+
+  color: var(--primary);
+  text-decoration: none;
+
+  overflow: visible;
+
+  transform: none;
+  filter: none;
+}
+
+/* Remove button shine */
+
+.link-btn::before {
+  display: none;
+}
+
+/* Underline */
+
+.link-btn::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+
+  width: 0;
+  height: 2px;
+
+  background: currentColor;
+
+  transition: width 0.28s ease;
+}
+
+/* Hover */
+
+.link-btn:hover {
+  transform: none;
+  filter: none;
+  opacity: 0.9;
+}
+
+.link-btn:hover::after {
+  width: 100%;
+}
+
+/* Active */
+
+.link-btn:active {
+  transform: none;
+  opacity: 0.7;
+}
+
+/* Focus */
+
+.link-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring);
+  border-radius: 4px;
+}
+
+/* Disabled */
+
+.link-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.link-btn:disabled::after {
+  display: none;
+}
